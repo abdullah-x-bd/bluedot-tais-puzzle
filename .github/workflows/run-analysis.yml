@@ -1,17 +1,17 @@
-name: Run final gate checks
+name: Run flower code model
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'analysis/gate_check_min.py'
+      - 'analysis/train_flower_code.py'
       - '.github/workflows/run-analysis.yml'
 
 permissions:
   contents: write
 
 jobs:
-  run-final-gate-checks:
+  run-flower-code:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -29,8 +29,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch sentence-transformers scikit-learn pandas numpy matplotlib tabulate
 
-      - name: Run final gate checks
-        run: python analysis/gate_check_min.py
+      - name: Run flower code training
+        run: python analysis/train_flower_code.py
 
       - name: Commit outputs
         run: |
@@ -40,6 +40,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No output changes"
           else
-            git commit -m "Add final gate check outputs"
+            git commit -m "Add flower code outputs"
             git push
           fi
