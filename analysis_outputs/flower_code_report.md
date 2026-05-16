@@ -1,16 +1,17 @@
-# Task 3: flower-code model
+# Task 3: hard flower-code model
 
-I trained a small head on the puzzle layer L activations with a two dimensional bottleneck. The country bit is decoded as the sign of cos(4 theta). Country examples are pushed into alternating petals of an eight-sector clock. Non-country examples occupy the interleaved petals.
+I trained a small sector classifier on the puzzle layer L activations and then used a hard two dimensional bottleneck. The bottleneck has eight points arranged on a circle. The country bit is not a side of the plane. It is the parity of the sector angle. Country examples occupy sectors 0, 2, 4, and 6. Non-country examples occupy sectors 1, 3, 5, and 7.
 
-This is weirder than the original model because the feature is not just a gated pocket. It is angular parity. Opposite and adjacent regions alternate class labels, so every straight line cuts through both classes.
+This is weirder than the original model because the feature is stored as alternating angular parity. No single line can isolate alternating petals around a circle. The correct decoder is the fourth angular harmonic, or equivalently a degree-four function of z1 and z2.
 
 ## Metrics
-| test               |   accuracy |   balanced_accuracy |      auc |
-|:-------------------|-----------:|--------------------:|---------:|
-| flower_decoder     |   0.963333 |            0.963471 | 0.990094 |
-| linear_probe_on_z  |   0.960667 |            0.960818 | 0.991013 |
-| degree4_probe_on_z |   0.959333 |            0.959499 | 0.988225 |
-| rbf_probe_on_z     |   0.964667 |            0.964797 | 0.991292 |
+| test                         |   accuracy |   balanced_accuracy |      auc |
+|:-----------------------------|-----------:|--------------------:|---------:|
+| flower_decoder_hard_sector   |   0.962    |            0.962138 | 0.962138 |
+| linear_probe_on_flower_z     |   0.488667 |            0.488613 | 0.494152 |
+| degree4_probe_on_flower_z    |   0.962    |            0.962138 | 0.964773 |
+| rbf_probe_on_flower_z        |   0.962    |            0.962138 | 0.961063 |
+| linear_probe_on_ideal_flower |   0.492    |            0.4919   | 0.500814 |
 
 ## Geometry claim
-The representation is a flower or clock code. The feature is stored in the fourth harmonic of the bottleneck angle, not in x, y, radius, or one direction. A linear probe on the 2D bottleneck should stay near chance, while a degree four or RBF probe should recover the label.
+The representation is a hard flower code. The model predicts an eight-sector latent code, then decodes country from sector parity. A linear probe on the 2D bottleneck should fail, while a nonlinear probe recovers the label.
