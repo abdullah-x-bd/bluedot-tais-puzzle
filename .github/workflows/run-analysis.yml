@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'analysis/run_puzzle_analysis.py'
+      - 'analysis/run_country_geometry.py'
       - '.github/workflows/run-analysis.yml'
 
 permissions:
@@ -13,7 +14,7 @@ permissions:
 jobs:
   run-analysis:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -29,8 +30,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch sentence-transformers scikit-learn pandas numpy matplotlib tabulate
 
-      - name: Run analysis
+      - name: Run base analysis
         run: python analysis/run_puzzle_analysis.py
+
+      - name: Run country geometry analysis
+        run: python analysis/run_country_geometry.py
 
       - name: Commit analysis outputs
         run: |
@@ -40,6 +44,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No analysis output changes"
           else
-            git commit -m "Add puzzle analysis outputs"
+            git commit -m "Add country geometry outputs"
             git push
           fi
