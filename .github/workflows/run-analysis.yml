@@ -1,10 +1,9 @@
-name: Run puzzle analysis
+name: Run country geometry analysis
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'analysis/run_puzzle_analysis.py'
       - 'analysis/run_country_geometry.py'
       - '.github/workflows/run-analysis.yml'
 
@@ -12,9 +11,9 @@ permissions:
   contents: write
 
 jobs:
-  run-analysis:
+  run-country-geometry:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -29,9 +28,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install torch sentence-transformers scikit-learn pandas numpy matplotlib tabulate
-
-      - name: Run base analysis
-        run: python analysis/run_puzzle_analysis.py
 
       - name: Run country geometry analysis
         run: python analysis/run_country_geometry.py
