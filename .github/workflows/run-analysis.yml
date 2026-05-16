@@ -1,0 +1,45 @@
+name: Run puzzle analysis
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'analysis/run_puzzle_analysis.py'
+      - '.github/workflows/run-analysis.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch sentence-transformers scikit-learn pandas numpy matplotlib tabulate
+
+      - name: Run analysis
+        run: python analysis/run_puzzle_analysis.py
+
+      - name: Commit analysis outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add analysis_outputs
+          if git diff --cached --quiet; then
+            echo "No analysis output changes"
+          else
+            git commit -m "Add puzzle analysis outputs"
+            git push
+          fi
