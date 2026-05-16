@@ -1,17 +1,17 @@
-name: Run country geometry analysis
+name: Run final gate checks
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'analysis/run_country_geometry.py'
+      - 'analysis/gate_check_min.py'
       - '.github/workflows/run-analysis.yml'
 
 permissions:
   contents: write
 
 jobs:
-  run-country-geometry:
+  run-final-gate-checks:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -29,17 +29,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch sentence-transformers scikit-learn pandas numpy matplotlib tabulate
 
-      - name: Run country geometry analysis
-        run: python analysis/run_country_geometry.py
+      - name: Run final gate checks
+        run: python analysis/gate_check_min.py
 
-      - name: Commit analysis outputs
+      - name: Commit outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add analysis_outputs
           if git diff --cached --quiet; then
-            echo "No analysis output changes"
+            echo "No output changes"
           else
-            git commit -m "Add country geometry outputs"
+            git commit -m "Add final gate check outputs"
             git push
           fi
